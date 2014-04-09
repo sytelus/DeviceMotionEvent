@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Test DeviceMotionEvent Class</title>
+    <meta name="author" content="42loops" >
+  </head>
+  <body>
+      <div id="c">No DeviceMotionEvent...</div>
+      <script>
+	  
+	  
+var posX = 0;
+var posY = 0;
+var posZ = 0;
+
+var vX = 0;
+var vY = 0;
+var vZ = 0;
+
+var minAcclX = 0;
+var minAcclY = 0;
+var minAcclZ = 0;
+
+var maxAcclX = 0;
+var maxAcclY = 0;
+var maxAcclZ = 0;
+
+var sumAcclX = 0;
+var sumAcclY = 0;
+var sumAcclZ = 0;
+
+var startAccelTime = (new Date()).getTime();
+var lastAccelTime = (new Date()).getTime();
+	  
+function $(id) {
+    return document.getElementById(id);
+}
+
+function log(id, str) {
+    $(id).innerHTML = str;
+}
+
+
+function onReady(evt) {
+    document.removeEventListener("DOMContentLoaded", this);
+	log('c', lastAccelTime);
+    function logMotion(evt) {
+        var str = "DeviceMotionEvent <br>";
+
+        if (evt.interval) {
+            str += " interval: " + evt.interval + " <br>";
+        }
+        else {
+            str += "interval: not available<br>";
+        }
+        if(evt.accelerationIncludingGravity) {
+            str += " acc w G x: " + evt.accelerationIncludingGravity.x 
+                + " acc w G y: " + evt.accelerationIncludingGravity.y 
+                + " acc w G  z: " + evt.accelerationIncludingGravity.z + " <br><br>";
+        }
+        else {
+            str += "accelerationIncludingGravity not available<br>";
+        }
+        if (evt.acceleration) {
+            str += " acc x: " + evt.acceleration.x + " <br>"
+                + " acc y: " + evt.acceleration.y + " <br>"
+                + " acc z: " + evt.acceleration.z + " <br><br>";
+
+			var interval = (lastAccelTime - (new Date()).getTime()) * 0.001;
+			str += " interval: " + interval + " <br><br>";
+			
+			posX += (evt.acceleration.x * interval * interval / 2) + (vX * interval);
+			posY += (evt.acceleration.y * interval * interval / 2) + (vY * interval);
+			posZ += (evt.acceleration.z * interval * interval / 2) + (vZ * interval);
+
+            str += " posX: " + posX + " <br>"
+                + " posY: " + posY + " <br>"
+                + " posZ: " + posZ + " <br><br>";
+			
+			minAcclX = Math.min(minAcclX, evt.acceleration.x);
+			minAcclY = Math.min(minAcclY, evt.acceleration.y);
+			minAcclZ = Math.min(minAcclZ, evt.acceleration.z);
+			maxAcclX = Math.max(maxAcclX, evt.acceleration.x);
+			maxAcclY = Math.max(maxAcclY, evt.acceleration.y);
+			maxAcclZ = Math.max(maxAcclZ, evt.acceleration.z);
+			sumAcclX += evt.acceleration.x;
+			sumAcclY += evt.acceleration.y;
+			sumAcclZ += evt.acceleration.z;
+
+			
+			var totalTime = (startAccelTime - (new Date()).getTime()) * 0.001;
+            str += " Min: " + minAcclX + "," + minAcclY  + "," + minAcclZ + " <br><br>";
+			str += " Max: " + maxAcclX + "," + maxAcclY  + "," + maxAcclZ + " <br><br>";
+			str += " Avg: " + sumAcclX / totalTime  + "," + sumAcclY / totalTime  + "," + sumAcclZ / totalTime  + " <br><br>";
+	
+			
+			lastAccelTime = (new Date()).getTime();
+        }
+        else {
+            str += "acceleration not available<br>"; 
+        }
+        if (evt.rotationRate) {
+            str += " rotationRate alpha : " + evt.rotationRate.alpha 
+                + " rotationRate beta : " + evt.rotationRate.beta 
+                + " rotationRate gamma : " + evt.rotationRate.gamma        }
+        else {
+            str += "rotationRate not available<br>";
+        }
+        log('c', str);
+    }
+
+    // https://developer.apple.com/library/safari/#documentation/SafariDOMAdditions/Reference/DeviceMotionEventClassRef/DeviceMotionEvent/DeviceMotionEvent.html
+    window.addEventListener("devicemotion", logMotion);
+}
+
+document.addEventListener('DOMContentLoaded', onReady);
+      </script>
+  </body>
+</html>

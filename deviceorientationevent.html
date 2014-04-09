@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Test DeviceOrientationEvent Class</title>
+    <meta name="author" content="42loops" >
+  </head>
+  <body>
+      <div id="d">No DeviceOrientationEvent...</div>
+      <script>
+function $(id) {
+    return document.getElementById(id);
+}
+
+function log(id, str) {
+    $(id).innerHTML = str;
+}
+
+function onReady(evt) {
+    document.removeEventListener("DOMContentLoaded", this);
+    // https://developer.apple.com/library/safari/#documentation/SafariDOMAdditions/Reference/DeviceOrientationEventClassRef/DeviceOrientationEvent/DeviceOrientationEvent.html%23//apple_ref/doc/uid/TP40010526
+    window.ondeviceorientation = function(evt) {
+        log('d', str + "alpha" + evt.alpha + " beta " + evt.beta + "gamma " + evt.gamma);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', onReady);
+      </script>
+  </body>
+</html>
